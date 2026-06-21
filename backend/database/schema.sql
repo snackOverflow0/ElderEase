@@ -417,3 +417,45 @@ CREATE TABLE emergency_requests (
         ON DELETE SET NULL
 
 ) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: announcements
+
+Stores announcements displayed on the dashboard.
+
+=============================================================
+*/
+
+CREATE TABLE announcements (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    title VARCHAR(200) NOT NULL,
+
+    content TEXT NOT NULL,
+
+    posted_by INT UNSIGNED NOT NULL,
+
+    publish_date DATE NOT NULL,
+
+    expiration_date DATE,
+
+    status ENUM(
+        'Draft',
+        'Published',
+        'Archived'
+    ) DEFAULT 'Draft',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_announcement_user
+        FOREIGN KEY (posted_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
+) ENGINE=InnoDB;
