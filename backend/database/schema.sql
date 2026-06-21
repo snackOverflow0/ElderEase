@@ -358,3 +358,62 @@ CREATE TABLE appointments (
         ON DELETE SET NULL
 
 ) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: emergency_requests
+
+Stores emergency assistance requests submitted by or for
+senior citizens.
+
+=============================================================
+*/
+
+CREATE TABLE emergency_requests (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    senior_id INT UNSIGNED NOT NULL,
+
+    assigned_staff INT UNSIGNED,
+
+    request_type ENUM(
+        'Medical',
+        'Transportation',
+        'Food Assistance',
+        'Financial Assistance',
+        'Rescue',
+        'Other'
+    ) NOT NULL,
+
+    description TEXT NOT NULL,
+
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    status ENUM(
+        'Pending',
+        'In Progress',
+        'Resolved',
+        'Cancelled'
+    ) DEFAULT 'Pending',
+
+    remarks TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_emergency_senior
+        FOREIGN KEY (senior_id)
+        REFERENCES seniors(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_emergency_staff
+        FOREIGN KEY (assigned_staff)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+
+) ENGINE=InnoDB;
