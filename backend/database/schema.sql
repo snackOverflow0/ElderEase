@@ -459,3 +459,34 @@ CREATE TABLE announcements (
         ON DELETE RESTRICT
 
 ) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: activity_logs
+
+Stores user activity for auditing.
+
+=============================================================
+*/
+
+CREATE TABLE activity_logs (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT UNSIGNED NOT NULL,
+
+    activity VARCHAR(255) NOT NULL,
+
+    description TEXT,
+
+    ip_address VARCHAR(45),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_activity_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
+) ENGINE=InnoDB;
