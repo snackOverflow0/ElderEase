@@ -226,3 +226,135 @@ CREATE TABLE seniors (
         ON DELETE RESTRICT
 
 ) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: benefit_types
+
+Stores all available senior citizen benefit programs.
+
+=============================================================
+*/
+
+CREATE TABLE benefit_types (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    benefit_name VARCHAR(100) NOT NULL,
+
+    description TEXT,
+
+    is_active BOOLEAN DEFAULT TRUE,
+
+    requires_amount BOOLEAN DEFAULT TRUE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_benefit_name
+        UNIQUE (benefit_name)
+
+) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: benefits
+
+Stores every benefit released to a senior citizen.
+
+=============================================================
+*/
+
+CREATE TABLE benefits (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    senior_id INT UNSIGNED NOT NULL,
+
+    benefit_type_id INT UNSIGNED NOT NULL,
+
+    released_by INT UNSIGNED NOT NULL,
+
+    amount DECIMAL(10,2) NOT NULL,
+
+    release_date DATE NOT NULL,
+
+    remarks TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_benefit_senior
+        FOREIGN KEY (senior_id)
+        REFERENCES seniors(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_benefit_type
+        FOREIGN KEY (benefit_type_id)
+        REFERENCES benefit_types(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_released_by
+        FOREIGN KEY (released_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
+) ENGINE=InnoDB;
+
+/*
+=============================================================
+TABLE: appointments
+
+Stores appointments requested or scheduled for senior citizens.
+
+=============================================================
+*/
+
+CREATE TABLE appointments (
+
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    senior_id INT UNSIGNED NOT NULL,
+
+    assigned_staff INT UNSIGNED,
+
+    appointment_date DATE NOT NULL,
+
+    appointment_time TIME NOT NULL,
+
+    purpose VARCHAR(255) NOT NULL,
+
+    status ENUM(
+        'Pending',
+        'Approved',
+        'Completed',
+        'Cancelled'
+    ) DEFAULT 'Pending',
+
+    remarks TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_appointment_senior
+        FOREIGN KEY (senior_id)
+        REFERENCES seniors(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_appointment_staff
+        FOREIGN KEY (assigned_staff)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+
+) ENGINE=InnoDB;
